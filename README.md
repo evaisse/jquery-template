@@ -9,8 +9,8 @@ Code is minimal, < 1k minified+gzipped
 
 Quick demos
 
-    - https://rawgit.com/evaisse/jquery-template/master/example1.html
-    - https://rawgit.com/evaisse/jquery-template/master/example2.html
+ - https://rawgit.com/evaisse/jquery-template/master/example1.html
+ - https://rawgit.com/evaisse/jquery-template/master/example2.html
 
 
 For the impatient
