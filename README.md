@@ -1,11 +1,20 @@
-# jquery-template
-An EJS jQuery template engine, that embedded JS into HTML with &lt;% %> &amp; &lt;%= %> tags
+jquery-template
+===
 
-quick demo
+An EJS jQuery template engine, that allow embeddeding JS into HTML with &lt;% %> &amp; &lt;%= %> tags.
 
-    - https://jsfiddle.net/38rdydsg/7/
+Templates are compiled into a re-usable function.
+
+Code is minimal, < 1k minified+gzipped
+
+Quick demos
+
+    - https://rawgit.com/evaisse/jquery-template/master/example1.html
+    - https://rawgit.com/evaisse/jquery-template/master/example2.html
+
 
 For the impatient
+===
 
 ```html
 <div id="result"></div>
