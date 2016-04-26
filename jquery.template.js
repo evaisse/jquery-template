@@ -30,9 +30,10 @@
      * @return {Function} a reusable function that will serve as a template
      */
     function compileTemplateString(templateString, id) {
-        id = id || 'anonymous';
+        id = String(id || 'anonymous');
         var comp = new Function("ctxt",
-            "/*  */ var p=[],print=function(){p.push.apply(p,arguments);};" +
+            "/* " + id + " */ var p=[],print=function(){p.push.apply(p,arguments);};" +
+            "$.template.scope = ctxt;" +
             // Introduce the data as local variables using with(){}
             "with(ctxt || {}){p.push('" +
             // Convert the template into pure JavaScript
@@ -40,12 +41,22 @@
             .replace(/'(?=[^%]*%>)/g,"\t")
             .split("'").join("\\'")
             .split("\t").join("'")
-            .replace(/<%=(.+?)%>/g, "',$1\n,'")
+            .replace(/<%-(.+?)%>/g, "',$1\n,'")
+            .replace(/<%=(.+?)%>/g, "',$.template.htmlEscape($1)\n,'")
             .split("<%").join("');\n")
             .split("%>").join("\np.push('")
             +  "');}return p.join('');");
         comp.id = id;
         return comp;
+    }
+
+    /**
+     * Escape input string before HTML inclusion
+     * @param  {String} unsafestring A string to escape before any input into html content
+     * @return {String} safe string input
+     */
+    function htmlEscape(unsafestring) {
+        return $('<div>').text(unsafestring).html();
     }
 
     /**
@@ -62,6 +73,7 @@
     
 
     $.template.compile = compileTemplateString;
+    $.template.htmlEscape = htmlEscape;
 
     /**
      * Register a set of templates from DOM elements contents

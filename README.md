@@ -1,19 +1,22 @@
 jquery-template
 ===
 
-An EJS jQuery template engine, that allow embeddeding JS into HTML with &lt;% %> &amp; &lt;%= %> tags.
+An EJS jQuery template engine that allow embeddeding JS into HTML with &lt;% %> &amp; &lt;%= %> tags (Code is minimal < 1k minified+gzipped).
 
-Templates are compiled into a re-usable function.
+Templates are compiled into a re-usable function. Templating syntax is similar to https://www.npmjs.com/package/ejs
 
-Code is minimal, < 1k minified+gzipped
+ - Control flow with <% %>
+ - Escaped output with <%= %>
+ - Unescaped raw output with <%- %>
 
 Quick demos
+---
 
  - https://rawgit.com/evaisse/jquery-template/master/example1.html
  - https://rawgit.com/evaisse/jquery-template/master/example2.html
 
 
-For the impatient
+Quickstart
 ===
 
 ```html
@@ -23,7 +26,8 @@ For the impatient
       <header><%= header %></header>
       <ul>
       <% items.forEach(function (item) { %>
-          <li><%= $.template('item', item) %></li>
+          <% // note the raw output here using '-' instead of "=" %>
+          <li><%- $.template('item', item) %></li>
       <% }) %>
       </ul>
   </menu>
