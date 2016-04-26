@@ -29,9 +29,10 @@
      * generator (and which will be cached).
      * @return {Function} a reusable function that will serve as a template
      */
-    function compileTemplateString(templateString) {
-        return new Function("ctxt",
-            "var p=[],print=function(){p.push.apply(p,arguments);};" +
+    function compileTemplateString(templateString, id) {
+        id = id || 'anonymous';
+        var comp = new Function("ctxt",
+            "/*  */ var p=[],print=function(){p.push.apply(p,arguments);};" +
             // Introduce the data as local variables using with(){}
             "with(ctxt || {}){p.push('" +
             // Convert the template into pure JavaScript
@@ -43,51 +44,45 @@
             .split("<%").join("');\n")
             .split("%>").join("\np.push('")
             +  "');}return p.join('');");
+        comp.id = id;
+        return comp;
     }
 
     /**
-     * Fetch all defined templates a template or retrieve one 
-     * @return {Object} the current template set
-     */
-    $.templates = function () {
-        return templates;
-    };
-
-    /**
      * Render a template or retrieve one 
-     * @param  {[type]} id   template id
-     * @param  {[type]} data Template context
+     * @param  {String} id   template id
+     * @param  {Object} data Template context
      * @return {String} rendering of compiled template
      */
     $.template = function (id, data) {
-        return templates[id](data);
+        if (!arguments.length) return templates;
+        else if (arguments.length == 1) return templates[id];
+        else return templates[id](data);
     };
     
-    /**
-     * Render into selected elements a given template
-     * @param  {templateId} id   template id
-     * @param  {Object}     data Template context
-     */
-    $.fn.template = function (id, data) {
-        $(this).html($.template(id, data || {}));
-    };
+
+    $.template.compile = compileTemplateString;
     
     /**
-     * Resgiter a a set of 
-     * @return {[type]} [description]
+     * Register a set of templates from DOM elements contents
+     * @example <script type="text/ejs" id="my-template">... template ...</script>
      */
-    $.fn.loadTemplates = function () {
+    $.fn.template = function (templateId, data) {
+        var n = arguments.length;
         $(this).each(function () {
-            var id = $(this).data('id') ? $(this).data('id') : this.id;
-            if (!id) {
-                console.error('Invalid template ' + this);
-            } else if (templates[id]) {
-                console.error('Template ' + id + 'already defined');
+            if (!n) {
+                var id = $(this).data('id') ? $(this).data('id') : this.id;
+                if (!id) {
+                    console.error('Invalid template ' + this);
+                } else if (templates[id]) {
+                    console.error('Template ' + id + ' already defined');
+                } else {
+                    templates[id] = compileTemplateString($(this).html(), id);
+                }
             } else {
-                templates[id] = compileTemplateString($(this).html());
+                $(this).html(templates[templateId](data));
             }
         });
     };
 
 })(jQuery);
-
