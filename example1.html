@@ -1,14 +1,12 @@
-# jquery-template
-An EJS jQuery template engine, that embedded JS into HTML with &lt;% %> &amp; &lt;%= %> tags
+<html>
+<head>
+    <title>Demo</title>
+</head>
+<body>
 
-quick demo
 
-    - https://jsfiddle.net/38rdydsg/7/
-
-For the impatient
-
-```html
 <div id="result"></div>
+
 <script id="template-menu" type="text/ejs">
   <menu>
       <header><%= header %></header>
@@ -19,10 +17,7 @@ For the impatient
       </ul>
   </menu>
 </script>
-```
 
-```html
-<!-- You can use data-id -->
 <script data-id="item" type="text/ejs">
     <% if (ctxt) { %>
         <item action="<%= id %>" id="<%= id %>"><%= this.label || id %></item>
@@ -30,10 +25,12 @@ For the impatient
         -
     <% } %>
 </script>
-```
 
 
-```javascript
+<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.3.js"></script>
+<script src="https://rawgit.com/evaisse/jquery-template/master/jquery.template.js"></script>
+<script type="text/javascript">
 var payload = {
     "header": "SVG Viewer",
     "items": [
@@ -41,8 +38,24 @@ var payload = {
         {"id": "OpenNew", "label": "Open New"},
         null,
         {"id": "ZoomIn", "label": "Zoom In"},
-        ...
         {"id": "ZoomOut", "label": "Zoom Out"},
+        {"id": "OriginalView", "label": "Original View"},
+        null,
+        {"id": "Quality"},
+        {"id": "Pause"},
+        {"id": "Mute"},
+        null,
+        {"id": "Find", "label": "Find..."},
+        {"id": "FindAgain", "label": "Find Again"},
+        {"id": "Copy"},
+        {"id": "CopyAgain", "label": "Copy Again"},
+        {"id": "CopySVG", "label": "Copy SVG"},
+        {"id": "ViewSVG", "label": "View SVG"},
+        {"id": "ViewSource", "label": "View Source"},
+        {"id": "SaveAs", "label": "Save As"},
+        null,
+        {"id": "Help"},
+        {"id": "About", "label": "About Adobe CVG Viewer..."}
     ]
 };
 
@@ -52,4 +65,4 @@ $.template(); // fetch a dictonnary of all registered templates
 $.template.compile(templateAsString); // low-level template compilation method
 $.template('template-id', payload); // return rendered template as string
 $.template('template-id')(payload); // return a given compiled template, same as above
-```
+</script>
