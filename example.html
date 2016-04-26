@@ -1,0 +1,79 @@
+<html>
+<head>
+    <title>Demo</title>
+</head>
+<body>
+
+
+<div class="city"></div>
+<div class="cities"></div>
+
+
+<script type="text/ejs" id="template-city-weather">
+
+    <h1><%= name %> <%= temperature %></h1>
+
+</script>
+
+<script type="text/ejs" id="template-city-list">
+    
+    <% if (!cities.length) { %>
+        <h2>Loading data from firebase...</h2>
+    <% } else { %>
+        <h2><%= cities.length %> cities</h2>
+    <% } %>
+    
+    <ul>
+    <% cities.forEach(function (city) { %>
+        <li><a href="javscript://" data-name="<%= city %>"><%= city %></a></li>
+    <% }) %>
+    </ul>
+
+</script>
+
+
+<script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.3.js"></script>
+<script src="https://rawgit.com/evaisse/jquery-template/master/jquery.template.js"></script>
+<script src="./jquery.template.js"></script>
+<script type="text/javascript">
+
+var selectedTown,
+    cities = {};
+
+// register templates
+$("[type='text/ejs']").template();
+
+
+$('.cities').template('template-city-list', {
+    cities: []
+});
+
+var weatherRef = new Firebase('https://publicdata-weather.firebaseio.com/');
+weatherRef.on('value', function(snapshot) {
+    var cities = snapshot.val();
+    $('.cities').template('template-city-list', {
+        cities: Object.keys(cities),
+    }).find('a').on('click', function () {
+        selectedTown = $(this).data('name');
+
+        var weatherTempRef = new Firebase('https://publicdata-weather.firebaseio.com/' + selectedTown + '/currently');
+        weatherTempRef.child('temperature').on('value', function(snapshot) {
+            $('.city').template('template-city-weather', {
+                name: selectedTown,
+                city: cities[selectedTown],
+                temperature: snapshot.val()
+            });
+            console.log('Temperature is currently ' + snapshot.val());
+        });
+
+    });
+});
+
+
+
+
+
+</script>
+</body>
+</html>

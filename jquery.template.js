@@ -62,7 +62,7 @@
     
 
     $.template.compile = compileTemplateString;
-    
+
     /**
      * Register a set of templates from DOM elements contents
      * @example <script type="text/ejs" id="my-template">... template ...</script>
@@ -83,6 +83,7 @@
                 $(this).html(templates[templateId](data));
             }
         });
+        return $(this);
     };
 
 })(jQuery);
