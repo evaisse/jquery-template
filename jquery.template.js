@@ -52,11 +52,13 @@
 
     /**
      * Escape input string before HTML inclusion
+     * @see https://jsperf.com/htmlencoderegex/25
      * @param  {String} unsafestring A string to escape before any input into html content
      * @return {String} safe string input
      */
     function htmlEscape(unsafestring) {
-        return $('<div>').text(unsafestring).html();
+        return unsafestring.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+                           .replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     /**
