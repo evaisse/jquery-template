@@ -57,8 +57,12 @@
      * @return {String} safe string input
      */
     function htmlEscape(unsafestring) {
-        return unsafestring.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
-                           .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return new String(unsafestring)
+                        .replace(/&/g, '&amp;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#39;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;');
     }
 
     /**
