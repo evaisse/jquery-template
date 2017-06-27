@@ -1,7 +1,8 @@
 /**
  * jQuery template plugin using EJS syntax
- * 
- * @copyright johnresig for most the compile code implementatio
+ * @author evaisse
+ * @copyright johnresig for most the compile code implementation
+ * @see https://github.com/evaisse/jquery-template
  * @see http://ejohn.org/blog/javascript-micro-templating/
  */
 ;(function ($, window, document) {
@@ -23,6 +24,7 @@
     // Create the defaults once
     var pluginName = 'templates';
     var templates = {};
+    var _id = 0;
     
 
     function stringify(obj) {
@@ -43,24 +45,34 @@
      * @return {Function} a reusable function that will serve as a template
      */
     function compileTemplateString(templateString, id) {
-        id = String(id || 'anonymous');
-        var comp = new Function("ctxt",
-            "/* " + id + " */ var p=[],print=function(){p.push.apply(p,arguments);};" +
-            "$.template.scope = ctxt;" +
+        var jsString,
+            compiled,
+            node = document.createElement('script'),
+        id = String(id || 'anonymous'+_id++);
+
+        node.text = "window['jquery-template:#"+id+"'] = function (ctxt) {" +
+            "/* " + id + " */ var self=this;__out=[],print=function(){p.push.apply(p,arguments);};" +
+            "jQuery.template.scope = ctxt;" +
             // Introduce the data as local variables using with(){}
-            "with(ctxt || {}){p.push('" +
+            "with(ctxt || {}){__out.push('" +
             // Convert the template into pure JavaScript
             templateString.replace(/[\r\t\n]/g, " ")
             .replace(/'(?=[^%]*%>)/g,"\t")
             .split("'").join("\\'")
             .split("\t").join("'")
-            .replace(/<%-(.+?)%>/g, "',stringify($1)\n,'")
-            .replace(/<%=(.+?)%>/g, "',$.template.htmlEscape($1)\n,'")
+            .replace(/<%-(.+?)%>/g, "',(function(){try{return jQuery.template.html($1);}catch(e){console.error(e);return '';}})()\n,'")
+            .replace(/<%=(.+?)%>/g, "',(function(){try{return jQuery.template.htmlEscape($1);}catch(e){console.error(e);return '';}})()\n,'")
             .split("<%").join("');\n")
-            .split("%>").join("\np.push('")
-            +  "');}return p.join('');");
-        comp.id = id;
-        return comp;
+            .split("%>").join("\n__out.push('")
+            +  "');}return __out.join('');};window['jquery-template:#"+id+"'].id = '"+id+"'";
+        
+        node.setAttribute('type', 'text/javascript');
+        document.head.appendChild(node);
+        // root.removeChild(node);
+        // compiled = $(document).data('jquery-template:#'+id);
+        // compiled.id = id;
+        compiled = window['jquery-template:#'+id];
+        return compiled;
     }
 
     /**
@@ -93,6 +105,7 @@
 
     $.template.compile = compileTemplateString;
     $.template.htmlEscape = htmlEscape;
+    $.template.html = stringify;
 
     /**
      * Register a set of templates from DOM elements contents
@@ -117,4 +130,4 @@
         return $(this);
     };
 
-})(jQuery);
+})(jQuery, window, document);
