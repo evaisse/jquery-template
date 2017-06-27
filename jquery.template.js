@@ -24,6 +24,19 @@
     var pluginName = 'templates';
     var templates = {};
     
+
+    function stringify(obj) {
+        if (typeof obj == "string") {
+            return obj;
+        } else if (obj === null || obj === false || obj === NaN || obj === undefined) { // ''
+            return '';
+        } else if ((obj+"").indexOf('[') === 0) { // default object2string should be avoid [object Object]
+            return '';
+        } else { // stringifable object
+            return (obj+"");
+        }
+    }
+
     /**
      * Generate a reusable function that will serve as a template
      * generator (and which will be cached).
@@ -41,7 +54,7 @@
             .replace(/'(?=[^%]*%>)/g,"\t")
             .split("'").join("\\'")
             .split("\t").join("'")
-            .replace(/<%-(.+?)%>/g, "',$1\n,'")
+            .replace(/<%-(.+?)%>/g, "',stringify($1)\n,'")
             .replace(/<%=(.+?)%>/g, "',$.template.htmlEscape($1)\n,'")
             .split("<%").join("');\n")
             .split("%>").join("\np.push('")
@@ -57,7 +70,7 @@
      * @return {String} safe string input
      */
     function htmlEscape(unsafestring) {
-        return (""+unsafestring)
+        return stringify(unsafestring)
                 .replace(/&/g, '&amp;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#39;')
